@@ -1,0 +1,207 @@
+---
+title: "Homework_4_FINAL"
+author: "Lincoln Bohn"
+date: "11/4/2021"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Homework Part 1
+
+
+```{r}
+rep(0, 5) # Replicate 0, 5 times
+rep(1:3, 4) # Replicate 1-3, 4 times
+rep(4:6, c(1, 2, 3))# Replicate 4-6, repeat 1st variable 1 time, repeat 2nd variable 2 times, repeat 3rd variable 3 times 
+```
+
+```{r}
+My_Variable <- 3 # Defines My_Variable as 3
+  print(My_Variable) # Print My_Variable
+seq(1,10, by = 2) # Sequence 1-10, incrementally by 2
+vector_1 <- c(1, 2, 3, 4, 5) # Create a vector variable vector_1, defines each row as it aligns inside c(...)
+  print(vector_1) # Print vector_1
+```
+
+Homework Part 2
+
+```{r}
+data(mtcars) # Imports mtcars data
+names(mtcars) # Names of mt cars variables
+ncol(mtcars) # Number of columns in mtcars
+nrow(mtcars) # Number of rows in mtcars
+```
+#3 How many rows and how many variables belong to this dataframe? What does this dataset represent and where does it come from?
+    
+    There are 32 rows (observations) and 11 columns (variables) | The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+
+#4 Descriptive statistics by function
+```{r}
+#Seperate functions for descriptive statistics in mtcars, mpg column
+
+min(mtcars$mpg)
+median(mtcars$mpg)
+mean(mtcars$mpg)
+max(mtcars$mpg)
+
+```
+#4B Summary of common descriptive statistics
+
+```{r}
+#Summary of common descriptive statistics 
+summary(mtcars)
+```
+
+
+#5 Creates a tables showing the summary statistics of mpg by cyl.
+
+```{r}
+mtcars_df <- mtcars # mtcars_df is defined with data from mtcars for later manipulation if needed
+  aggregate(mpg ~ cyl, data = mtcars_df, summary) # Computes summary of mpg by cyl, using mtcars_df, with a summary of descriptive statistics
+
+```
+```{r}
+min_ag <-  # Defines variable min_ag as the minimum mpg explained by cyl.
+  aggregate(mpg ~ cyl,
+        data = mtcars_df, 
+        FUN = min
+        )
+min_ag # Prints min ag
+
+max_ag <- # Defines variable max_ag as the maximum mpg explained by cyl
+  aggregate(mpg ~ cyl,
+        data = mtcars_df, 
+        FUN = max
+        )
+max_ag # Prints max ag
+```
+
+    The least fuel efficient 4 cyl car is:  Volvo 142E 21.4
+
+    The least fuel efficient 6 cyl car is:  Merc 280C 17.8
+
+    The least fuel efficient 8 cyl car is:  Cadillac Fleetwood & Lincoln Continental 10.4
+    
+    The most fuel efficient 8 cyl car is: Pontiac Firebird 19.2
+
+
+
+
+
+#6 Create a boxplot showing MPG by cylinder
+```{r}
+ mpg_cyl_bplot <- # Defines variable as a boxplot of mpg by cyl, from mtcars, with some renaming and recoloring
+  boxplot(mpg ~ cyl, data = mtcars, xlab = "Cylinder", ylab = "Miles Per Gallon", col = "light yellow", col.axis = "12") 
+
+```
+```{r}
+library(ggplot2)
+  # Testing ggplot package 
+ggplot(mtcars) +
+    geom_point(mapping = aes(x = cyl, y = mpg, color = cyl, size = mpg)) 
+ 
+
+```
+
+#7 Create a scatterplot of MPG versus weight
+```{r}
+# Scatterplot of wt and mpg, renamed axis and colors
+plot(mtcars$wt, 
+     mtcars$mpg, 
+     xlab = "Miles Per Gallon", 
+     ylab = "Weight",
+     col = "Dark Green",
+     col.axis = "darkred")
+
+```
+ 
+    In my view, Miles Per Gallon is negatively correlated with Car Weight. The strength of this relationship looks above R= -.5
+
+
+#8 What is the correlation coefficient between MPG and weight? Does this confirm your answer to the previous question?
+```{r}
+# Prints correlation coefficient of the two variables
+cor(mtcars$wt, 
+    mtcars$mpg)
+```
+
+    Yes. I believed it would be over .5, it is stronger than my estimate. I was being too conservative.
+
+
+#9 Create a linear regression that predicts MPG as a function of cylinders, displacement, horsepower, and weight.
+```{r}
+# Defines mpgreg as the linear model of mpg as a function of cyl, displacement, horsepower, and weight, from mtcars data
+mpgreg <-
+  lm(mpg ~ cyl + disp + hp + wt,
+     data = mtcars)
+# Prints summary of mpgreg variable
+summary(mpgreg)
+```
+
+#10 How strong is the model overall? Which variables were significant predictors of MPG?
+   
+    The model is quite strong with an adjusted R-squared of 0.82, weight is a significant predictor at the strongest level possible, followed by Cylinder at the .05 level. Horsepower was not found to be a significant predictor of MPG
+
+Homework Part 3
+
+#11 Create a plot of the correlation matrix between all the variables in the mtcars dataset.
+
+```{r}
+library(corrplot) #loads corrplot in this chunk
+
+mtcars_cor <- cor(mtcars_df) #defines correlation of all variables in mtcars
+
+ corrplot(mtcars_cor, # using correlations from mtcars data, defines the graphic printed below.
+          method = 'number', # Shows correlation coefficient strength in graphic
+          type = "upper", #
+          order = "hclust") 
+  # Another correlation matrix graphic from researching ??corrplot
+ 
+ corrplot(mtcars_cor,
+        p.mat = ,
+        method = 'circle',
+        type = 'lower',
+        insig='blank',
+        addCoef.col ='black',
+        number.cex = 0.8,
+        order = 'AOE',
+        diag=FALSE)
+
+```
+
+#11B What does this uncover about the correlations between the explanatory variables in the model you constructed for #9?
+    
+      This graphic uncovers the strength of the correlation we did from #9, If we go to a signifcant correlation like mpg ~ cyl, we can see -.85, which is a strong relationship. I would suspect this. Lets see mpg ~ wt, -.87, a little stronger, but also expected. Finally, mpg ~ hp also shows a -.78 strong negative relationship, but from #9 p=.102 which is telling us that there is a large chance that gross horsepower is not a good explanatory for mpg, because it could be due to another, possibly random, factor
+
+#12 Re-create the regression that you ran for #6 in the SPSS homework assignment within R and interpret the results.
+
+        
+```{r}
+library(foreign) #library "foreign" package
+
+
+df_spss_BB <- # Defines df_spss_BB as reading an SPSS file, and using its original labels imported into the data frame
+  read.spss("CPUC_Broadband_CTs.sav", use.value.label=TRUE, to.data.frame=TRUE) 
+
+
+```
+
+    #12B Construct another multivariate regression that predicts Adoption Rate, this time including at least five independent variables, two of which should be ethnic/racial variables. How strong is the model overall? Which variables are statistically significant predictors?
+      
+```{r}
+spss_BB_lm <- # Defines variable as linear model of adoption rate as explained by other variables
+  lm(AdoptionRate ~ medage + MHI + White + Hispanic + pct25wbach, data = df_spss_BB)
+ # Summary of desctriptive statistics for the linear model
+summary(spss_BB_lm)
+
+```
+    
+    Adjusted R-squared values are the same across spss and R calculations. spss = .433, .4329 in the model above, so even further decimal points, though they are not necessary. Therefore, the model is medium strength, showing our calculations are correct across two programs! 
+    Nearly All variables are significant at the strongest level, this was true in both programs. In both programs, medage was slightly less significant, but it is negligible at p = .002, whereas in this program it is p=0.00221. 
+    
